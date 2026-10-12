@@ -4,7 +4,9 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn fusion_force.wsgi",
-    "numReplicas": 1
+    "releaseCommand": "python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear",
+    "startCommand": "gunicorn fusion_force.wsgi --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --access-logfile -",
+    "numReplicas": 1,
+    "restartPolicyType": "ON_FAILURE"
   }
 }

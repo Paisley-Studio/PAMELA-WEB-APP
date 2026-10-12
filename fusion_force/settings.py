@@ -149,11 +149,17 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        # NOTE: switched from CompressedManifestStaticFilesStorage to
+        # CompressedStaticFilesStorage to avoid FileNotFoundError during
+        # collectstatic on Railway. The manifest variant was trying to
+        # post-process files that Cloudinary's storage backend listed but
+        # never wrote to disk (cloudinary/js/*, media/*, admin/*), which
+        # caused collectstatic to crash in a loop.
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
-WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_MANIFEST_STRICT = False  # No-op with the non-manifest backend, kept for safety
 
 # ========== CLOUDINARY SDK OPTIONS ==========
 CLOUDINARY = {
